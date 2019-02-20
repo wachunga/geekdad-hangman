@@ -30,8 +30,7 @@
 .wrong-zone {
     color: red;
     font-size: 30px;
-    line-height: 1;
-    min-height: 30px;
+    min-height: 45px;
 }
 
 #wrong-img {
@@ -74,6 +73,11 @@ body {
         </div>
     </div>
 </div>
+
+<audio id="audio-correct" src="https://www.soundjay.com/button/sounds/button-09.mp3" autoplay="false" ></audio>
+<audio id="audio-wrong" src="https://www.soundjay.com/button/sounds/button-10.mp3" autoplay="false" volume="0.2" ></audio>
+<audio id="audio-game-over" src="https://www.soundjay.com/misc/sounds/fail-trombone-01.mp3" autoplay="false" ></audio>
+<audio id="audio-you-win" src="https://www.soundjay.com/human/sounds/applause-01.mp3" autoplay="false" ></audio>
 
 <script>
 
@@ -137,6 +141,7 @@ function checkGuess(guess) {
 }
 
 function handleCorrectGuess(indices, guess) {
+    playSound('correct');
     const letterLines = document.querySelectorAll('.letter-line');
     indices.forEach(index => {
         letterLines[index].textContent = guess;
@@ -149,6 +154,7 @@ function handleCorrectGuess(indices, guess) {
 
 function handleWrongGuess(guess) {
     wrongGuesses.push(guess);
+    playSound('wrong');
     document.querySelector('.wrong-zone').textContent = wrongGuesses.join(', ');
     const src = document.querySelector('#wrong-img').src;
     document.querySelector('#wrong-img').src = src.replace(/\d+/, wrongGuesses.length);
@@ -157,9 +163,20 @@ function handleWrongGuess(guess) {
     }
 }
 
+function playSound(soundKey) {
+    const sound = document.getElementById(`audio-${soundKey}`);
+    sound.currentTime = 0;
+    const volume = sound.getAttribute('volume');
+    if (volume) {
+        sound.volume = volume;
+    }
+    sound.play();
+}
+
 function gameOver() {
     const input = document.querySelector('.guess-box');
     input.setAttribute('disabled', true);
+    playSound('game-over');
     setTimeout(() => {
         alert('Game over!');
     }, 500);
@@ -168,6 +185,7 @@ function gameOver() {
 function youWin() {
     const input = document.querySelector('.guess-box');
     input.setAttribute('disabled', true);
+    playSound('you-win');
     setTimeout(() => {
         alert('You win!');
     }, 500);
